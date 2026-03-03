@@ -5,6 +5,10 @@ An intelligent offline task manager with smart scheduling and streak-based rewar
 ## 🔗 Live Demo
 https://saturn-todo.netlify.app
 
+## Background
+Original prototype made in Python/Jupyter using ipywidgets and JSON file storage before 
+being rebuilt as a full offline web app. See `saturn_prototype.ipynb`.
+
 ## Features
 - Smart task input with urgency (0-10) and task size (1-5)
 - Auto-generated 7-day schedule based on your free slots
