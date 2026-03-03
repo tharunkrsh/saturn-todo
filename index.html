@@ -1,0 +1,1917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATURN</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Alumni+Sans+SC:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --bg-nav: #334155;
+            --bg-tab: #334155;
+            --bg-tab-active: #1e293b;
+            --border-color: #334155;
+            --border-input: #475569;
+            --text-header: #ffffff;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --accent-primary: #4f46e5;
+            --accent-primary-hover: #4338ca;
+            --accent-secondary: #C4A484; /* Dusty Saturn Orange/Brown */
+        }
+
+        .theme-bronze {
+            --bg-primary: #291d11;
+            --bg-card: #4d3c2a;
+            --bg-input: #5a4836;
+            --bg-nav: #5a4836;
+            --bg-tab: #5a4836;
+            --bg-tab-active: #4d3c2a;
+            --border-color: #785e44;
+            --border-input: #785e44;
+            --text-header: #fde8d7;
+            --text-primary: #fde8d7;
+            --text-secondary: #d1b69f;
+            --accent-primary: #cd7f32;
+            --accent-primary-hover: #b8732d;
+            --accent-secondary: #e69138;
+        }
+
+        .theme-silver {
+            --bg-primary: #2d3436;
+            --bg-card: #4a5459;
+            --bg-input: #5f6b70;
+            --bg-nav: #5f6b70;
+            --bg-tab: #5f6b70;
+            --bg-tab-active: #4a5459;
+            --border-color: #7e8a91;
+            --border-input: #7e8a91;
+            --text-header: #f0f0f0;
+            --text-primary: #f0f0f0;
+            --text-secondary: #c0c0c0;
+            --accent-primary: #b0b0b0;
+            --accent-primary-hover: #a0a0a0;
+            --accent-secondary: #dcdcdc;
+        }
+
+        .theme-gold {
+            --bg-primary: #3c2f00;
+            --bg-card: #614d0c;
+            --bg-input: #755f1f;
+            --bg-nav: #755f1f;
+            --bg-tab: #755f1f;
+            --bg-tab-active: #614d0c;
+            --border-color: #947514;
+            --border-input: #947514;
+            --text-header: #fff8e1;
+            --text-primary: #fff8e1;
+            --text-secondary: #fbeeb9;
+            --accent-primary: #ffd700;
+            --accent-primary-hover: #e6c200;
+            --accent-secondary: #ffea70;
+        }
+
+        .theme-diamond {
+            --bg-primary: #1c2e3f;
+            --bg-card: #304e6c;
+            --bg-input: #456a8f;
+            --bg-nav: #456a8f;
+            --bg-tab: #456a8f;
+            --bg-tab-active: #304e6c;
+            --border-color: #5582b1;
+            --border-input: #5582b1;
+            --text-header: #e0f2ff;
+            --text-primary: #e0f2ff;
+            --text-secondary: #b0d4f7;
+            --accent-primary: #87ceeb;
+            --accent-primary-hover: #76bada;
+            --accent-secondary: #add8e6;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.5s ease;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border-radius: 0.75rem; padding: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            margin-bottom: 1.5rem; border: 1px solid transparent;
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; transition: all 0.2s ease-in-out; cursor: pointer; border: none; }
+        .btn-primary { background-color: var(--accent-primary); color: var(--bg-primary); } 
+        .btn-primary:hover { background-color: var(--accent-primary-hover); }
+        .btn-success { background-color: #16a34a; color: white; } .btn-success:hover { background-color: #15803d; }
+        .btn-danger { background-color: #dc2626; color: white; } .btn-danger:hover { background-color: #b91c1c; }
+        .btn-info { background-color: #2563eb; color: white; } .btn-info:hover { background-color: #1d4ed8; }
+        .btn-warning { background-color: #f59e0b; color: white; } .btn-warning:hover { background-color: #d97706; }
+
+        input, select, textarea { 
+            border: 1px solid var(--border-input); 
+            border-radius: 0.5rem; padding: 0.5rem; width: 100%; 
+            background-color: var(--bg-input); 
+            color: var(--text-primary);
+            transition: background-color 0.5s ease, border-color 0.5s ease;
+        }
+        input::placeholder, textarea::placeholder { color: var(--text-secondary); }
+
+        .tab-btn { 
+            padding: 0.5rem 1rem; border-radius: 0.5rem 0.5rem 0 0; font-weight: 500; cursor: pointer; 
+            border: 1px solid var(--border-color); 
+            border-bottom: none; 
+            background-color: var(--bg-tab); 
+            color: var(--text-secondary); 
+        }
+        .tab-btn.active { 
+            background-color: var(--bg-tab-active); 
+            color: var(--accent-secondary); 
+            border-bottom-color: var(--bg-tab-active); 
+            position: relative; top: 1px; 
+        }
+
+        .tab-content { display: none; padding: 1rem; border: 1px solid var(--border-color); border-radius: 0 0.5rem 0.5rem 0.5rem; }
+        .tab-content.active { display: block; }
+
+        .toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            padding: 1rem 2rem; border-radius: 0.5rem; color: white; font-weight: 600; z-index: 1000; opacity: 0;
+            transition: opacity 0.5s, bottom 0.5s;
+        }
+        .toast.show { opacity: 1; bottom: 30px; }
+        .toast.success { background-color: #16a34a; }
+        .toast.error { background-color: #dc2626; }
+        .toast.info { background-color: #2563eb; }
+
+        .accordion-header { cursor: pointer; padding: 0.75rem 1rem; background-color: var(--bg-input); border: 1px solid var(--border-color); border-radius: 0.5rem; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+        .accordion-content { display: none; padding: 1rem; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 0.5rem 0.5rem; }
+        .accordion-header.active + .accordion-content { display: block; }
+
+        .nav-btn { background-color: transparent; padding: 0.5rem 1.5rem; border-radius: 9999px; font-weight: 600; color: var(--text-primary); }
+        .nav-btn.active { background-color: var(--accent-primary); color: var(--bg-primary); }
+        header nav { background-color: var(--bg-card); }
+        
+        h1, h2 { color: var(--text-header); }
+        p, label { color: var(--text-secondary); }
+
+        .title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
+        .subheading { font-family: 'Alumni Sans SC', sans-serif; font-size: 1.75rem; letter-spacing: 1px; }
+        .card-heading { font-family: 'Bebas Neue', sans-serif; letter-spacing: 1px; }
+
+        #logo-container {
+            width: 120px;
+            height: 120px;
+            cursor: grab;
+        }
+
+        @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .confetti { position: absolute; width: 10px; height: 10px; opacity: 0.9; animation: fall linear infinite; }
+        @keyframes fall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-screen-xl mx-auto">
+        <header class="grid grid-cols-3 items-start text-center mb-8 py-4">
+            <div id="logo-container" class="justify-self-start -mt-8"></div>
+            <div class="col-start-2">
+                <h1 class="text-6xl font-bold title">SATURN</h1>
+                <p class="subheading">Your time, organized</p>
+            </div>
+            <div class="col-span-3">
+                <nav class="mt-6 p-2 rounded-full inline-flex space-x-2">
+                    <button id="nav-manager" class="nav-btn active">Task Manager</button>
+                    <button id="nav-scheduler" class="nav-btn">Task Scheduler</button>
+                </nav>
+            </div>
+        </header>
+
+        <main>
+            <!-- Task Manager Page -->
+            <div id="manager-page">
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <!-- Column 1 & 2: Add & Manage -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="card">
+                            <h2 class="text-2xl font-bold mb-4 card-heading">1. Add/Update Tasks</h2>
+                            <p class="text-sm mb-2">Format: Task, Urgency (0-10), Size (1-5), [Optional Info]</p>
+                            <textarea id="multi-task-input" placeholder="e.g., Write proposal, 9, 4.5, For the new project&#10;Design mockup, 8, 3, Blue theme" rows="4"></textarea>
+                            <button id="add-tasks-btn" class="btn btn-success w-full mt-2">Add Tasks</button>
+                        </div>
+
+                        <div class="card">
+                             <h2 class="text-2xl font-bold mb-4 card-heading">2. Manage Tasks</h2>
+                             <div class="mb-4">
+                                <label for="complete-task-dropdown" class="block font-medium mb-1">Complete a Task</label>
+                                <div class="flex gap-2">
+                                    <select id="complete-task-dropdown" class="flex-grow"></select>
+                                    <button id="complete-task-btn" class="btn btn-info">Complete</button>
+                                </div>
+                             </div>
+
+                            <div id="management-accordion">
+                                <div class="accordion-header" data-accordion="edit-active">Manage Active Tasks <span>▼</span></div>
+                                <div class="accordion-content" id="edit-active">
+                                    <label for="edit-task-dropdown" class="block font-medium mb-1">Select Task</label>
+                                    <select id="edit-task-dropdown" class="mb-2"></select>
+                                    <label class="block font-medium mb-1">New Urgency (0-10)</label>
+                                    <input type="number" id="new-urgency" class="mb-2" step="0.1">
+                                    <label class="block font-medium mb-1">New Size (1-5)</label>
+                                    <input type="number" id="new-size" class="mb-2" step="0.5">
+                                    <label class="block font-medium mb-1">New Info</label>
+                                    <textarea id="new-info" class="mb-2" rows="2"></textarea>
+                                    <div class="flex gap-2">
+                                        <button id="update-task-btn" class="btn btn-primary flex-grow">Update All</button>
+                                        <button id="delete-task-btn" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-header mt-2" data-accordion="manage-history">Manage History <span>▼</span></div>
+                                <div class="accordion-content" id="manage-history">
+                                    <label for="delete-completed-dropdown" class="block font-medium mb-1">Select Completed Task</label>
+                                    <div class="flex gap-2">
+                                        <select id="delete-completed-dropdown" class="flex-grow"></select>
+                                        <button id="delete-completed-btn" class="btn btn-danger">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 3, 4, 5: View -->
+                    <div class="lg:col-span-3 card">
+                         <h2 class="text-2xl font-bold mb-4 card-heading">3. View Tasks & Progress</h2>
+                         <div id="task-view-tabs" class="flex border-b border-[var(--border-color)]">
+                            <button class="tab-btn active" data-tab="tab-graph">Graph</button>
+                            <button class="tab-btn" data-tab="tab-all-tasks">All Tasks</button>
+                            <button class="tab-btn" data-tab="tab-completed">Completed</button>
+                            <button class="tab-btn" data-tab="tab-stats">Stats</button>
+                        </div>
+                         <div id="tab-graph" class="tab-content active">
+                            <div id="focus-output"></div>
+                            <canvas id="task-graph-canvas"></canvas>
+                        </div>
+                         <div id="tab-all-tasks" class="tab-content max-h-96 overflow-y-auto"></div>
+                         <div id="tab-completed" class="tab-content max-h-96 overflow-y-auto"></div>
+                         <div id="tab-stats" class="tab-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Task Scheduler Page -->
+            <div id="scheduler-page" style="display: none;">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Left Column: Scheduler Setup -->
+                    <div class="space-y-6">
+                        <div class="card">
+                            <h2 class="text-2xl font-bold mb-4 card-heading">4. Set Fixed Appointments</h2>
+
+                            <div id="scheduler-tabs" class="flex space-x-1 border-b border-[var(--border-color)]">
+                                <button class="tab-btn active" data-tab="tab-sch-daily">Add Daily</button>
+                                <button class="tab-btn" data-tab="tab-sch-specific">Add Specific</button>
+                                <button class="tab-btn" data-tab="tab-sch-remove">Remove Slot</button>
+                                <button class="tab-btn" data-tab="tab-sch-history">History</button>
+                            </div>
+
+                            <div id="tab-sch-daily" class="tab-content active">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                                    <div><label for="repeating-start-time" class="text-sm">From</label><input type="time" id="repeating-start-time"></div>
+                                    <div><label for="repeating-end-time" class="text-sm">To</label><input type="time" id="repeating-end-time"></div>
+                                    <div class="sm:col-span-2"><label for="repeating-label" class="text-sm">Label</label><input type="text" id="repeating-label" placeholder="e.g., Lunch"></div>
+                                    <div class="sm:col-span-2"><button id="add-repeating-slot-btn" class="btn btn-primary w-full">Add Daily Slot</button></div>
+                                </div>
+                            </div>
+
+                            <div id="tab-sch-specific" class="tab-content">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-end">
+                                    <div><label for="busy-date" class="text-sm">Date</label><input type="date" id="busy-date"></div>
+                                    <div><label for="busy-label" class="text-sm">Label</label><input type="text" id="busy-label" placeholder="e.g., Doctor"></div>
+                                    <div><label for="busy-start-time" class="text-sm">From</label><input type="time" id="busy-start-time"></div>
+                                    <div><label for="busy-end-time" class="text-sm">To</label><input type="time" id="busy-end-time"></div>
+                                    <div class="sm:col-span-2"><button id="add-busy-slot-btn" class="btn btn-primary w-full">Add Specific Slot</button></div>
+                                </div>
+                            </div>
+
+                            <div id="tab-sch-remove" class="tab-content">
+                                <div class="flex items-end gap-2">
+                                    <div class="flex-grow"><label for="remove-slot-dropdown" class="text-sm">Select Slot</label><select id="remove-slot-dropdown"></select></div>
+                                    <button id="remove-slot-btn" class="btn btn-danger">Remove</button>
+                                </div>
+                            </div>
+
+                            <div id="tab-sch-history" class="tab-content">
+                                <div id="history-display" class="text-sm">
+                                    <p class="text-center italic">No past slots recorded.</p>
+                                </div>
+                            </div>
+
+                            <div id="fixed-times-display" class="mt-6 text-sm"></div>
+                        </div>
+
+                        <div class="card">
+                            <h2 class="text-2xl font-bold mb-4 card-heading">5. (Optional) Manual Scheduling</h2>
+                            <div class="space-y-4">
+                                <div><label for="manual-task-dropdown">Task</label><select id="manual-task-dropdown"></select></div>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div><label for="manual-date-picker">On Date</label><input type="date" id="manual-date-picker"></div>
+                                    <div><label for="manual-start-time">Start Time</label><input type="time" id="manual-start-time"></div>
+                                    <div><label for="manual-duration-input">Duration (mins)</label><input type="number" id="manual-duration-input" placeholder="Optional"></div>
+                                </div>
+                                <button id="manual-schedule-btn" class="btn btn-info w-full">Schedule Manually</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Schedule View -->
+                    <div class="card">
+                        <h2 class="text-2xl font-bold mb-4 card-heading">6. Generate Your Schedule</h2>
+                        <div class="flex flex-wrap gap-4 mb-6">
+                            <button id="generate-schedule-btn" class="btn btn-success flex-grow">Generate 7-Day Schedule</button>
+                            <button id="clear-schedule-btn" class="btn btn-danger flex-grow">Clear All Scheduled Data</button>
+                        </div>
+                        <div id="current-task-display" class="mb-4"></div>
+                        <div id="schedule-output" class="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-lg min-h-[500px]">
+                            <canvas id="schedule-canvas"></canvas>
+                            <div id="unscheduled-tasks" class="mt-4 text-center"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Task Completion Animation -->
+    <div id="completion-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.5); z-index: 5000; align-items: center; justify-content: center; overflow: hidden;">
+        <div id="completion-modal" class="text-center bg-white p-8 rounded-lg shadow-2xl relative max-w-md w-full" style="animation: zoomIn 0.5s ease-out;">
+            <!-- Content is injected by JS -->
+        </div>
+    </div>
+    
+    <!-- Reward Animation -->
+    <div id="reward-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.6); z-index: 5500; align-items: center; justify-content: center; overflow: hidden;">
+        <div id="reward-modal" class="text-center bg-white dark:bg-slate-800 p-8 rounded-lg shadow-2xl relative max-w-md w-full" style="animation: zoomIn 0.5s ease-out;">
+            <!-- Content is injected by JS -->
+        </div>
+    </div>
+
+    <!-- Graph Tooltip -->
+    <div id="graph-tooltip" class="hidden absolute bg-black bg-opacity-75 text-white text-xs rounded-md p-2 shadow-lg pointer-events-none z-50"></div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(0,0,0,0.6); z-index: 6000; display: none; align-items: center; justify-content: center;">
+        <div id="confirm-modal" class="text-center bg-white dark:bg-slate-800 p-6 rounded-lg shadow-2xl relative max-w-sm w-full" style="animation: zoomIn 0.3s ease-out;">
+            <p id="confirm-message" class="text-lg text-gray-800 dark:text-slate-200 mb-6"></p>
+            <div class="flex justify-center gap-4">
+                <button id="confirm-cancel-btn" class="btn bg-gray-300 hover:bg-gray-400 text-black dark:bg-slate-600 dark:hover:bg-slate-500">Cancel</button>
+                <button id="confirm-ok-btn" class="btn btn-danger">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- App State ---
+        let tasks = {};
+        let completedTasks = [];
+        let busySlots = {};
+        let manualSchedule = {};
+        let repeatingBusySlots = [];
+        let lastGeneratedSchedule = {};
+        let graphBarData = [];
+        let pastHistoryRecords = [];
+        let dailyProgress = {};
+        let streakInfo = { current: 0, lastDate: null };
+
+        // --- 3D Logo State ---
+        let logoScene, logoCamera, logoRenderer, logoGroup, logoPlanet, logoRing, isDragging = false, previousMousePosition = { x: 0, y: 0 };
+
+
+        // --- Constants ---
+        const COMPLIMENTS = ["Fantastic work!","You're on a roll!","Stellar effort!","That's how it's done!","Incredible!","Amazing job!","You're a superstar!","Keep up the great work!","Nothing can stop you!","Outstanding!","You're making great progress!","Brilliant!","Excellent!","Wonderful!","You've got this!","Impressive!","Magnificent!","You're a genius!","Superb!","Phenomenal!","Exceptional!","You're unstoppable!","Great job!","Well done!","Keep it up!","Proud of you!","Nailed it!","You rock!","Mission accomplished!","Task complete!","Another one bites the dust!","Done and done!","That's a win!","Major accomplishment!","You're crushing it!","Look at you go!","You're on fire!","Way to go!","That's the way!","You're a legend!","Top-notch work!","First-class effort!","Five-star performance!","A+ work!","You're a true professional!","Masterful!","Skillful!","Expertly done!","A job well done!","You make it look easy!","You're a natural!","Simply the best!","Better than ever!","You've outdone yourself!","A true masterpiece!","A work of art!","Perfection!","Couldn't have done it better myself!","You're an inspiration!","You're a role model!","Keep shining!","Absolutely killing it!","That was smooth!","Unbelievable!","Task obliterated!","Consider it handled.","Another goal scored!","Progress personified!","Efficiency at its finest.","That's some high-quality work.","You've set a new standard.","The bar has been raised.","Pure dedication on display.","The focus is real!","Flawless execution.","A perfect 10!","You didn't just do it, you owned it.","Making it happen!","That's the spirit!","Energy and effort paying off.","Peak performance!","You're in the zone!","That's momentum!","Building a legacy, one task at a time.","The definition of success.","This is what progress looks like.","Your hard work is so clear.","A true display of skill.","Respect.","Bravo!","Encore!","Chef's kiss!","Simply perfect.","Another one checked off the list!","You're a machine!","Productivity level: Expert.","Just keeps getting better.","A sight to behold."];
+        const ENCOURAGEMENTS = ["Tackle this first to build amazing momentum!","Your future self will thank you for getting this done.","Just imagine the satisfaction of checking this one off!","This is your chance to make a huge impact.","Getting this done will bring you so much clarity.","You've got the skills to knock this out of the park.","Focus on this and the rest will feel easier.","Completing this will be a massive win for the day!","This is the key to unlocking your progress.","Let's get this done and make today a success story.","Give this your focus and feel the stress melt away.","You're more than capable of handling this challenge.","Start with this one and you'll be unstoppable.","This is where you can really shine.","Think of the peace of mind you'll have after this.","Let's turn this challenge into an achievement.","This task is your stepping stone to a great day.","Crush this goal and set the tone for success.","The sooner you start, the sooner you'll feel amazing.","You are ready for this. Let's do it!"];
+
+        // --- DOM Elements ---
+        const multiTaskInput = document.getElementById('multi-task-input');
+        const addTasksBtn = document.getElementById('add-tasks-btn');
+        const focusOutput = document.getElementById('focus-output');
+        const taskGraphCanvas = document.getElementById('task-graph-canvas');
+        const allTasksTab = document.getElementById('tab-all-tasks');
+        const completedTab = document.getElementById('tab-completed');
+        const statsTab = document.getElementById('tab-stats');
+        const completeTaskDropdown = document.getElementById('complete-task-dropdown');
+        const completeTaskBtn = document.getElementById('complete-task-btn');
+        const editTaskDropdown = document.getElementById('edit-task-dropdown');
+        const newUrgencyInput = document.getElementById('new-urgency');
+        const newSizeInput = document.getElementById('new-size');
+        const newInfoInput = document.getElementById('new-info');
+        const updateTaskBtn = document.getElementById('update-task-btn');
+        const deleteTaskBtn = document.getElementById('delete-task-btn');
+        const deleteCompletedDropdown = document.getElementById('delete-completed-dropdown');
+        const deleteCompletedBtn = document.getElementById('delete-completed-btn');
+        const busyDateInput = document.getElementById('busy-date');
+        const busyStartTimeInput = document.getElementById('busy-start-time');
+        const busyEndTimeInput = document.getElementById('busy-end-time');
+        const busyLabelInput = document.getElementById('busy-label');
+        const addBusySlotBtn = document.getElementById('add-busy-slot-btn');
+        const repeatingStartTimeInput = document.getElementById('repeating-start-time');
+        const repeatingEndTimeInput = document.getElementById('repeating-end-time');
+        const repeatingLabelInput = document.getElementById('repeating-label');
+        const addRepeatingSlotBtn = document.getElementById('add-repeating-slot-btn');
+        const removeSlotDropdown = document.getElementById('remove-slot-dropdown');
+        const removeSlotBtn = document.getElementById('remove-slot-btn');
+        const fixedTimesDisplayDiv = document.getElementById('fixed-times-display');
+        const manualTaskDropdown = document.getElementById('manual-task-dropdown');
+        const manualDatePicker = document.getElementById('manual-date-picker');
+        const manualStartTimeInput = document.getElementById('manual-start-time');
+        const manualDurationInput = document.getElementById('manual-duration-input');
+        const manualScheduleBtn = document.getElementById('manual-schedule-btn');
+        const generateScheduleBtn = document.getElementById('generate-schedule-btn');
+        const clearScheduleBtn = document.getElementById('clear-schedule-btn');
+        const scheduleCanvas = document.getElementById('schedule-canvas');
+        const unscheduledTasksDiv = document.getElementById('unscheduled-tasks');
+        const toast = document.getElementById('toast');
+        const navManagerBtn = document.getElementById('nav-manager');
+        const navSchedulerBtn = document.getElementById('nav-scheduler');
+        const managerPage = document.getElementById('manager-page');
+        const schedulerPage = document.getElementById('scheduler-page');
+        const currentTaskDisplay = document.getElementById('current-task-display');
+        const graphTooltip = document.getElementById('graph-tooltip');
+        const confirmOverlay = document.getElementById('confirm-overlay');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmOkBtn = document.getElementById('confirm-ok-btn');
+        const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+
+        // --- Utility Functions ---
+        const showToast = (message, type = 'info', duration = 3000) => {
+            toast.textContent = message;
+            toast.className = `toast show ${type}`;
+            setTimeout(() => { toast.className = 'toast'; }, duration);
+        };
+
+        const debounce = (func, delay) => {
+            let timeout;
+            return function(...args) {
+                const context = this;
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(context, args), delay);
+            };
+        };
+
+        const sizeToDurationMinutes = (size) => Math.round((size - 1) * 60 + 10);
+        const toLocaleDateStringISO = (date) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        };
+
+        // --- Data Persistence ---
+        const saveData = () => {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            localStorage.setItem('completed_tasks', JSON.stringify(completedTasks));
+            localStorage.setItem('schedule_data', JSON.stringify({
+                busy_slots: busySlots,
+                manual_schedule: manualSchedule,
+                repeating_busy_slots: repeatingBusySlots,
+            }));
+            localStorage.setItem('dailyProgress', JSON.stringify(dailyProgress));
+            localStorage.setItem('streakInfo', JSON.stringify(streakInfo));
+        };
+
+        const loadData = () => {
+            const migrationDone = localStorage.getItem('migrationDone_v1');
+            const defaultTasks = {
+                "Clear out southampton outlook": {"info":"","urgency":7.7,"size":3},
+                "Check up on internships": {"info":"","urgency":9.3,"size":5},
+                "Fix CV": {"info":"do alongside internships","urgency":9.4,"size":4.5},
+                "SQL": {"info":"","urgency":8,"size":4},
+                "Kings career website ask miko": {"info":"","urgency":9.5,"size":3},
+                "Part time jobs": {"info":"","urgency":9.5,"size":4},
+                "Get library card": {"info":"","urgency":7.5,"size":2},
+                "Apply for sky internship": {"info":"","urgency":8.8,"size":4},
+                "sort out clothes on bathroom door": {"info":"","urgency":3.5,"size":2},
+                "laundry": {"urgency":9.8,"info":"","size":2.75},
+                "Check finances": {"urgency":10,"info":"Made a whole ahh finance dashboard program for ts 🥲🙏","size":3},
+                "Go talk to Santander": {"urgency":7.3,"info":"","size":2.2},
+                "Research KEPS": {"urgency":9.65,"info":"","size":1.5},
+                "Sort out daily tasks in journal": {"urgency":8.2,"info":"(one being eye drops daily + one being watch news daily)","size":2},
+                "Help mother make a food schedule": {"urgency":8,"info":"","size":3},
+                "amazon get one blade heads": {"urgency":8.5,"info":"","size":1},
+                "amazon get pull up bar + creatine": {"urgency":6.3,"info":"","size":1},
+                "sort out phone ui": {"urgency":7.5,"info":"","size":3}
+            };
+
+            const storedTasksRaw = localStorage.getItem('tasks');
+            if (!migrationDone) {
+                tasks = defaultTasks;
+                localStorage.setItem('migrationDone_v1', 'true');
+                showToast('Successfully loaded default tasks!', 'success');
+            } else {
+                tasks = JSON.parse(storedTasksRaw || '{}');
+            }
+
+            let tasksMigrated = false;
+            for (const name in tasks) {
+                let task = tasks[name];
+                if (typeof task !== 'object') { task = { urgency: task, info: "", size: 2.5 }; tasksMigrated = true; }
+                if ('priority' in task) { task.urgency = task.priority; delete task.priority; tasksMigrated = true; }
+                if ('weight' in task) { task.size = task.weight; delete task.weight; tasksMigrated = true; }
+                if (!('info' in task)) { task.info = ""; tasksMigrated = true; }
+                if (!('size' in task)) { task.size = 2.5; tasksMigrated = true; }
+                tasks[name] = task;
+            }
+
+            const storedCompleted = JSON.parse(localStorage.getItem('completed_tasks') || '[]');
+            let completedMigrated = false;
+            storedCompleted.forEach(entry => {
+                if ('priority' in entry) { entry.urgency = entry.priority; delete entry.priority; completedMigrated = true; }
+                if ('weight' in entry) { entry.size = entry.weight; delete entry.weight; completedMigrated = true; }
+            });
+            completedTasks = storedCompleted;
+
+            if (tasksMigrated || completedMigrated || !migrationDone) { saveData(); }
+
+            const scheduleData = JSON.parse(localStorage.getItem('schedule_data') || '{}');
+            busySlots = scheduleData.busy_slots || {};
+            manualSchedule = scheduleData.manual_schedule || {};
+            repeatingBusySlots = scheduleData.repeating_busy_slots || [];
+
+            dailyProgress = JSON.parse(localStorage.getItem('dailyProgress') || '{}');
+            const storedStreak = JSON.parse(localStorage.getItem('streakInfo') || 'null');
+            if (storedStreak) {
+                streakInfo = storedStreak;
+            }
+
+            const todayStr = toLocaleDateStringISO(new Date());
+            const todaysSize = dailyProgress[todayStr] || 0;
+            const tiers = [{name: "Diamond", size: 20}, {name: "Gold", size: 15}, {name: "Silver", size: 10}, {name: "Bronze", size: 5}];
+            const achievedTier = tiers.find(t => todaysSize >= t.size);
+            if(achievedTier) {
+                applyRewardTheme(achievedTier.name);
+            }
+        };
+        
+        // --- Confirmation Modal ---
+        let confirmCallback = null;
+
+        function showConfirmation(message, onConfirm) {
+            confirmMessage.textContent = message;
+            confirmCallback = onConfirm;
+            confirmOverlay.style.display = 'flex';
+        }
+
+        confirmOkBtn.addEventListener('click', () => {
+            if (typeof confirmCallback === 'function') {
+                confirmCallback();
+            }
+            confirmOverlay.style.display = 'none';
+            confirmCallback = null;
+        });
+
+        confirmCancelBtn.addEventListener('click', () => {
+            confirmOverlay.style.display = 'none';
+            confirmCallback = null;
+        });
+        
+        function applyRewardTheme(tier) {
+            const body = document.body;
+            body.classList.remove('theme-bronze', 'theme-silver', 'theme-gold', 'theme-diamond');
+            if (tier) {
+                body.classList.add(`theme-${tier.toLowerCase()}`);
+            }
+            // Use a timeout to ensure CSS variables are updated before applying to 3D model
+            setTimeout(updateLogoColors, 50);
+        }
+
+        // --- UI Refresh Functions ---
+        function populateDropdown(dropdown, items, emptyText) {
+            dropdown.innerHTML = '';
+            if (!items || items.length === 0) {
+                const opt = document.createElement('option');
+                opt.textContent = emptyText;
+                opt.value = '';
+                dropdown.appendChild(opt);
+                return;
+            }
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.textContent = item.text;
+                opt.value = item.value;
+                dropdown.appendChild(opt);
+            });
+        }
+
+        function refreshAllDropdowns() {
+            const sortedTasks = Object.entries(tasks).sort(([,a], [,b]) => b.urgency - a.urgency);
+            const taskOptions = sortedTasks.map(([name, data]) => ({
+                text: `${name} (U: ${data.urgency}, S: ${data.size})`,
+                value: name
+            }));
+            populateDropdown(editTaskDropdown, taskOptions, "No tasks to edit");
+            populateDropdown(completeTaskDropdown, taskOptions, "No tasks to complete");
+
+            const completedOptions = [...completedTasks].sort((a,b) => new Date(b.completed_at) - new Date(a.completed_at))
+                .map(entry => ({
+                    text: `${entry.name} (${new Date(entry.completed_at).toLocaleString()})`,
+                    value: entry.completed_at
+                }));
+            populateDropdown(deleteCompletedDropdown, completedOptions, "No completed tasks");
+
+            refreshSchedulerDropdowns();
+        }
+
+        function refreshSchedulerDropdowns() {
+            const manuallyScheduledNames = new Set();
+            Object.values(manualSchedule).forEach(day => day.forEach(slot => manuallyScheduledNames.add(slot.name)));
+            const availableTasks = Object.keys(tasks).filter(name => !manuallyScheduledNames.has(name));
+            const manualTaskOptions = availableTasks
+                .sort((a,b) => (tasks[b]?.urgency || 0) - (tasks[a]?.urgency || 0))
+                .map(name => ({ text: `${name} (U: ${tasks[name]?.urgency})`, value: name }));
+            populateDropdown(manualTaskDropdown, manualTaskOptions, "No tasks to schedule");
+
+            let removalOptions = [];
+            repeatingBusySlots.forEach((slot, i) => removalOptions.push({ text: `DAILY: ${slot.label} (${slot.start}-${slot.end})`, value: `repeating_${i}` }));
+            Object.entries(busySlots).forEach(([date, slots]) => slots.forEach((slot, i) => removalOptions.push({ text: `${date}: ${slot.label} (${slot.start}-${slot.end})`, value: `specific_${date}_${i}` })));
+            const today = new Date(); today.setHours(0,0,0,0);
+            Object.entries(manualSchedule).forEach(([date, slots]) => {
+                const d = new Date(date + 'T00:00:00');
+                if (d >= today) {
+                    slots.forEach((slot, i) => {
+                        const startTime = new Date(slot.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const endTime = new Date(slot.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        removalOptions.push({ text: `${date}: MANUAL - ${slot.name} (${startTime}-${endTime})`, value: `manual_${date}_${i}` });
+                    });
+                }
+            });
+            populateDropdown(removeSlotDropdown, removalOptions.sort((a,b) => a.text.localeCompare(b.text)), "No slots to remove");
+        }
+
+        function refreshFixedTimesDisplay() {
+            fixedTimesDisplayDiv.innerHTML = '';
+            const now = new Date(); now.setHours(0,0,0,0);
+            const nextWeek = new Date(now.getTime() + 7 * 86400000);
+
+            const upcomingBusy = Object.entries(busySlots)
+                .filter(([date]) => {
+                    const d = new Date(date + 'T00:00:00');
+                    return d >= now && d <= nextWeek;
+                })
+                .reduce((acc, [date, slots]) => ({ ...acc, [date]: slots }), {});
+
+            const upcomingManual = Object.entries(manualSchedule)
+                .filter(([date]) => {
+                    const d = new Date(date + 'T00:00:00');
+                    return d >= now && d <= nextWeek;
+                })
+                .reduce((acc, [date, slots]) => ({ ...acc, [date]: slots }), {});
+
+            const hasAnyFixedTime =
+                Object.keys(upcomingBusy).length > 0 ||
+                Object.keys(upcomingManual).length > 0 ||
+                repeatingBusySlots.length > 0;
+
+            if (!hasAnyFixedTime) {
+                fixedTimesDisplayDiv.innerHTML = `<p class="text-center italic mt-4">No fixed times in the next 7 days.</p>`;
+                return;
+            }
+
+            let html = '<h3 class="font-bold text-md mb-2">Your Fixed Times (Next 7 Days)</h3><div class="space-y-3">';
+            if (repeatingBusySlots.length > 0) {
+                html += '<div><strong class="block">Repeating Daily:</strong><ul>';
+                repeatingBusySlots.sort((a,b) => a.start.localeCompare(b.start)).forEach(slot => { html += `<li class="ml-4">- ${slot.label}: ${slot.start} to ${slot.end}</li>`; });
+                html += '</ul></div>';
+            }
+
+            const allDates = new Set([...Object.keys(upcomingBusy), ...Object.keys(upcomingManual)]);
+            Array.from(allDates).sort().forEach(dateStr => {
+                const date = new Date(dateStr + 'T00:00:00');
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                html += `<div><strong class="block">On ${dayName} (${dateStr}):</strong><ul class="ml-4">`;
+                const daySlots = [];
+                (upcomingBusy[dateStr] || []).forEach(slot => daySlots.push({ time: slot.start, text: `${slot.label}: ${slot.start} to ${slot.end}` }));
+                (upcomingManual[dateStr] || []).forEach(slot => {
+                    const startTime = new Date(slot.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    const endTime = new Date(slot.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    daySlots.push({ time: startTime, text: `MANUAL - ${slot.name} (${startTime} - ${endTime})` });
+                });
+                daySlots.sort((a,b) => a.time.localeCompare(b.time)).forEach(item => { html += `<li>- ${item.text}</li>`; });
+                html += '</ul></div>';
+            });
+            fixedTimesDisplayDiv.innerHTML = html + '</div>';
+        }
+
+        function showAllTasks() {
+            if (Object.keys(tasks).length === 0) { allTasksTab.innerHTML = `<p>No active tasks.</p>`; return; }
+            let html = '<ul class="space-y-2">';
+            Object.entries(tasks).sort(([,a], [,b]) => b.urgency - a.urgency).forEach(([name, data], index) => {
+                html += `<li class="p-2 bg-[var(--bg-input)] rounded">
+                            <div class="flex items-start">
+                                <span class="font-bold mr-2">${index + 1}.</span>
+                                <div>
+                                    <strong class="text-[var(--text-primary)]">${name}</strong> (U: ${data.urgency}, S: ${data.size})
+                                    <p class="text-sm">${data.info || ''}</p>
+                                </div>
+                            </div>
+                          </li>`;
+            });
+            allTasksTab.innerHTML = html + '</ul>';
+        }
+
+        function showCompleted() {
+            if (completedTasks.length === 0) { completedTab.innerHTML = `<p>No tasks completed yet.</p>`; return; }
+            const tasksByDate = {};
+            completedTasks.forEach(entry => {
+                const dateStr = new Date(entry.completed_at).toLocaleDateString();
+                if (!tasksByDate[dateStr]) tasksByDate[dateStr] = [];
+                tasksByDate[dateStr].push(entry);
+            });
+            let html = '';
+            Object.keys(tasksByDate).sort((a,b) => new Date(b) - new Date(a)).forEach(dateStr => {
+                html += `<h4 class="font-bold mt-2">${dateStr}</h4><ul class="space-y-1 ml-2">`;
+                tasksByDate[dateStr].sort((a,b) => new Date(b.completed_at) - new Date(a.completed_at)).forEach(entry => {
+                    const timeStr = new Date(entry.completed_at).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                    html += `<li>
+    <span>${timeStr}</span> - ✔ <strong>${entry.name}</strong> (S: ${entry.size})
+    ${entry.info ? `<p class="text-sm ml-6">${entry.info}</p>` : ''}
+</li>`;
+
+                });
+                html += `</ul>`;
+            });
+            completedTab.innerHTML = html;
+        }
+
+        function showStats() {
+            const achievedSize = completedTasks.reduce((sum, task) => sum + (task.size || 2.5), 0);
+            const activeSize = Object.values(tasks).reduce((sum, data) => sum + (data.size || 2.5), 0);
+            const totalPossibleSize = achievedSize + activeSize;
+            if (totalPossibleSize === 0) {
+                statsTab.innerHTML = `<p>No tasks yet. Add some to see your stats!</p>`;
+                return;
+            }
+            const completionPerc = (achievedSize / totalPossibleSize) * 100;
+            const filledLength = completionPerc;
+            const bar = `<div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-4"><div class="bg-green-500 h-4 rounded-full" style="width: ${filledLength}%"></div></div>`;
+            
+            const todayStr = toLocaleDateStringISO(new Date());
+            const todaysSize = dailyProgress[todayStr] || 0;
+            const tiers = [{name: "Bronze", size: 5}, {name: "Silver", size: 10}, {name: "Gold", size: 15}, {name: "Diamond", size: 20}];
+            let nextTier = tiers.find(t => todaysSize < t.size);
+            
+            let dailyGoalHtml = '';
+            if (nextTier) {
+                const dailyPerc = (todaysSize / nextTier.size) * 100;
+                dailyGoalHtml = `
+                    <p class="mt-4"><strong>Today's Goal (${nextTier.name} Badge):</strong> ${todaysSize.toFixed(2)} / ${nextTier.size}</p>
+                     <div class="w-full bg-gray-200 dark:bg-slate-700 rounded-full h-4">
+                        <div class="bg-yellow-500 h-4 rounded-full" style="width: ${dailyPerc}%"></div>
+                    </div>
+                `;
+            } else {
+                 dailyGoalHtml = `<p class="mt-4 text-cyan-400 font-bold">💎 You've reached the Diamond tier for today! Incredible! 💎</p>`;
+            }
+
+            statsTab.innerHTML = `
+                <p><strong>Completed Effort (Size):</strong> ${achievedSize.toFixed(2)}</p>
+                <p><strong>Remaining Effort (Size):</strong> ${activeSize.toFixed(2)}</p>
+                <hr class="my-2 border-[var(--border-color)]">
+                <p class="font-bold text-lg">Completion Rate: ${completionPerc.toFixed(2)}%</p>
+                ${bar}
+                <hr class="my-4 border-[var(--border-color)]">
+                <p class="font-bold text-lg">🔥 Current Streak: ${streakInfo.current} day${streakInfo.current === 1 ? '' : 's'}</p>
+                ${dailyGoalHtml}
+            `;
+        }
+
+        function showHistory() {
+            const historyDiv = document.getElementById('history-display');
+            const today = new Date(); today.setHours(0,0,0,0);
+
+            const entries = [];
+
+            // Past specific busy slots
+            for (const [date, slots] of Object.entries(busySlots)) {
+                const d = new Date(date + 'T00:00:00');
+                if (d < today) {
+                    (slots || []).forEach(s => {
+                        entries.push({
+                            date,
+                            label: s.label,
+                            start: s.start,
+                            end: s.end,
+                            type: 'Busy'
+                        });
+                    });
+                }
+            }
+
+            // Past manual schedules
+            for (const [date, slots] of Object.entries(manualSchedule)) {
+                const d = new Date(date + 'T00:00:00');
+                if (d < today) {
+                    (slots || []).forEach(s => {
+                        const start = new Date(s.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        const end = new Date(s.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        entries.push({
+                            date,
+                            label: s.name,
+                            start,
+                            end,
+                            type: s.source === 'manual' ? 'Manual Task' : 'Auto Task'
+                        });
+                    });
+                }
+            }
+            
+            entries.push(...pastHistoryRecords);
+            if (entries.length === 0) {
+                historyDiv.innerHTML = `<p class="text-center italic">No past slots recorded.</p>`;
+                return;
+            }
+
+            const grouped = {};
+            entries.forEach(e => {
+                if (!grouped[e.date]) grouped[e.date] = [];
+                grouped[e.date].push(e);
+            });
+
+            let html = '';
+            Object.keys(grouped)
+                .sort((a,b) => new Date(b) - new Date(a))
+                .forEach(dateStr => {
+                    const dayName = new Date(dateStr + 'T00:00:00').toLocaleDateString('en-US', { weekday: 'long' });
+                    html += `<div class="mb-3"><strong>${dayName} (${dateStr})</strong><ul class="ml-4 list-disc">`;
+                    grouped[dateStr]
+                        .sort((a,b) => a.start.localeCompare(b.start))
+                        .forEach(item => {
+                            html += `<li><span class="font-semibold">${item.label}</span> <span class="opacity-80">(${item.type})</span> — ${item.start} to ${item.end}</li>`;
+                        });
+                    html += `</ul></div>`;
+                });
+
+            historyDiv.innerHTML = html;
+        }
+
+        // --- Task Maker Handlers ---
+        function addTasks() {
+            let added = 0, updated = 0, errors = [];
+            const lines = multiTaskInput.value.trim().split('\n');
+            if (!multiTaskInput.value.trim()) { showToast('Input is empty.', 'error'); return; }
+
+            lines.forEach((line, i) => {
+                if (!line.trim()) return;
+                const parts = line.split(',').map(p => p.trim());
+                if (parts.length < 3) { errors.push(`L${i+1}: Format must be 'Task, Urgency, Size'.`); return; }
+                const name = parts[0];
+                const urgency = parseFloat(parts[1]);
+                const size = parseFloat(parts[2]);
+                const info = parts.slice(3).join(', ').trim();
+
+                if (!name) { errors.push(`L${i+1}: Task name is empty.`); return; }
+                if (isNaN(urgency) || urgency < 0 || urgency > 10) { errors.push(`L${i+1}: Urgency must be 0-10.`); return; }
+                if (isNaN(size) || size < 1 || size > 5) { errors.push(`L${i+1}: Size must be 1-5.`); return; }
+
+                if (tasks[name]) updated++; else added++;
+                tasks[name] = { urgency, size, info };
+            });
+
+            if (added > 0 || updated > 0) {
+                saveData();
+                multiTaskInput.value = '';
+                showToast(`${added} tasks added, ${updated} updated.`, 'success');
+                refreshAllUI();
+                plotTaskGraph();
+            }
+            if (errors.length > 0) showToast(errors.join('\n'), 'error', 5000);
+        }
+
+        async function runCompletionAnimation(taskName, percentageIncrease, oldPercentage, newPercentage) {
+            const overlay = document.getElementById('completion-overlay');
+            const modal = document.getElementById('completion-modal');
+            const compliment = COMPLIMENTS[Math.floor(Math.random() * COMPLIMENTS.length)];
+
+            modal.innerHTML = `
+                <h2 class="text-3xl font-bold text-green-600 mb-2 font-poppins">Task Completed!</h2>
+                <p class="text-xl text-gray-700 mb-4">You finished: <strong>${taskName}</strong></p>
+                <p class="text-lg italic text-yellow-500 mb-4">"${compliment}"</p>
+                <div class="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 rounded mb-4">
+                    <p class="font-bold">Progress Boost!</p>
+                    <p>Your completion rate just went up by <strong>${percentageIncrease.toFixed(2)}%</strong>!</p>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="completion-progress-bar" class="bg-green-500 h-4 rounded-full" style="width: ${oldPercentage}%; transition: width 1.5s ease-out;"></div>
+                </div>
+            `;
+
+            for (let i = 0; i < 100; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = (Math.random() * -100) + 'px';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                confetti.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                overlay.appendChild(confetti);
+            }
+
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                const progressBar = document.getElementById('completion-progress-bar');
+                if (progressBar) { progressBar.style.width = `${newPercentage}%`; }
+            }, 100);
+
+            await new Promise(res => setTimeout(res, 5000));
+
+            overlay.style.display = 'none';
+            modal.innerHTML = '';
+            overlay.querySelectorAll('.confetti').forEach(el => el.remove());
+        }
+
+        async function runRewardAnimation(reward, newStreak) {
+            const overlay = document.getElementById('reward-overlay');
+            const modal = document.getElementById('reward-modal');
+            const rewards = {
+                Bronze: { color: '#cd7f32', icon: '🥉', message: 'Solid Start!' },
+                Silver: { color: '#c0c0c0', icon: '🥈', message: 'Amazing Effort!' },
+                Gold: { color: '#ffd700', icon: '🥇', message: 'Golden Performance!' },
+                Diamond: { color: '#87ceeb', icon: '💎', message: 'Diamond Dominance!' }
+            };
+            const rewardInfo = rewards[reward.tier];
+
+            modal.innerHTML = `
+                <h2 class="text-3xl font-bold mb-2 font-poppins" style="color: ${rewardInfo.color};">${rewardInfo.icon} ${reward.tier} Badge Unlocked! ${rewardInfo.icon}</h2>
+                <p class="text-xl text-gray-700 dark:text-slate-300 mb-4">${rewardInfo.message}</p>
+                <p class="text-lg">You've achieved a total task size of <strong>${reward.totalSize.toFixed(2)}</strong> today!</p>
+                ${newStreak ? `<div class="mt-4 p-3 bg-green-100 dark:bg-green-900/50 border-l-4 border-green-500 rounded">
+                                <p class="text-green-800 dark:text-green-300 font-semibold">🔥 New Streak: ${newStreak} days! 🔥</p>
+                               </div>` : ''}
+            `;
+
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = (Math.random() * -100) + 'px';
+                confetti.style.animationDelay = Math.random() * 2 + 's';
+                confetti.style.backgroundColor = rewardInfo.color;
+                confetti.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                overlay.appendChild(confetti);
+            }
+
+            overlay.style.display = 'flex';
+
+            await new Promise(res => setTimeout(res, 6000));
+
+            overlay.style.display = 'none';
+            modal.innerHTML = '';
+            overlay.querySelectorAll('.confetti').forEach(el => el.remove());
+        }
+
+        async function updateProgressAndStreaks(taskData) {
+            const todayStr = toLocaleDateStringISO(new Date());
+            const taskSize = taskData.size || 2.5;
+
+            const previousTotalSize = dailyProgress[todayStr] || 0;
+            const newTotalSize = previousTotalSize + taskSize;
+            dailyProgress[todayStr] = newTotalSize;
+
+            const rewardTiers = { Bronze: 5, Silver: 10, Gold: 15, Diamond: 20 };
+            let rewardToShow = null;
+            for (const [tier, size] of Object.entries(rewardTiers)) {
+                if (previousTotalSize < size && newTotalSize >= size) {
+                    rewardToShow = { tier, totalSize: newTotalSize };
+                }
+            }
+
+            let newStreakValue = null;
+            const lastDateStr = streakInfo.lastDate;
+
+            if (!lastDateStr || lastDateStr !== todayStr) {
+                const today = new Date();
+                const yesterday = new Date(today);
+                yesterday.setDate(today.getDate() - 1);
+                const yesterdayStr = toLocaleDateStringISO(yesterday);
+
+                if (lastDateStr === yesterdayStr) {
+                    streakInfo.current++;
+                    showToast(`Streak extended to ${streakInfo.current} days!`, 'success');
+                } else {
+                    streakInfo.current = 1;
+                    showToast(`New streak started!`, 'success');
+                }
+                streakInfo.lastDate = todayStr;
+                newStreakValue = streakInfo.current;
+            }
+
+            if (rewardToShow) {
+                applyRewardTheme(rewardToShow.tier);
+                await runRewardAnimation(rewardToShow, newStreakValue);
+            }
+        }
+        
+        async function completeTask() {
+            const taskName = completeTaskDropdown.value;
+            if (!taskName) { showToast('No task selected.', 'error'); return; }
+
+            const oldAchievedSize = completedTasks.reduce((sum, task) => sum + (task.size || 2.5), 0);
+            const oldActiveSize = Object.values(tasks).reduce((sum, data) => sum + (data.size || 2.5), 0);
+            const oldTotalSize = oldAchievedSize + oldActiveSize;
+            const oldPercentage = oldTotalSize > 0 ? (oldAchievedSize / oldTotalSize) * 100 : 0;
+
+            const taskData = tasks[taskName];
+            delete tasks[taskName];
+            completedTasks.push({ ...taskData, name: taskName, completed_at: new Date().toISOString() });
+
+            for (const date in manualSchedule) {
+                (manualSchedule[date] || []).forEach(slot => {
+                    if (slot.name === taskName) {
+                        pastHistoryRecords.push({
+                            date,
+                            label: taskName,
+                            start: new Date(slot.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            end: new Date(slot.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                            type: 'Manual Task (Completed)'
+                        });
+                    }
+                });
+                manualSchedule[date] = manualSchedule[date].filter(task => task.name !== taskName);
+                if (manualSchedule[date].length === 0) { delete manualSchedule[date]; }
+            }
+            
+            const newAchievedSize = completedTasks.reduce((sum, task) => sum + (task.size || 2.5), 0);
+            const newActiveSize = Object.values(tasks).reduce((sum, data) => sum + (data.size || 2.5), 0);
+            const newTotalSize = newAchievedSize + newActiveSize;
+            const newPercentage = newTotalSize > 0 ? (newAchievedSize / newTotalSize) * 100 : 100;
+            const percentageIncrease = newPercentage - oldPercentage;
+
+            await runCompletionAnimation(taskName, percentageIncrease, oldPercentage, newPercentage);
+            await updateProgressAndStreaks(taskData);
+
+            saveData();
+            refreshAllUI();
+            plotTaskGraph();
+        }
+
+        editTaskDropdown.addEventListener('change', (e) => {
+            const taskName = e.target.value;
+            if (tasks[taskName]) {
+                const { urgency, size, info } = tasks[taskName];
+                newUrgencyInput.value = urgency;
+                newSizeInput.value = size;
+                newInfoInput.value = info;
+            }
+        });
+
+        function updateTask() {
+            const taskName = editTaskDropdown.value;
+            if (!taskName) { showToast('No task selected.', 'error'); return; }
+            const newUrgency = parseFloat(newUrgencyInput.value);
+            const newSize = parseFloat(newSizeInput.value);
+            const newInfo = newInfoInput.value.trim();
+
+            if (isNaN(newUrgency) || newUrgency < 0 || newUrgency > 10) { showToast('Urgency must be 0-10.', 'error'); return; }
+            if (isNaN(newSize) || newSize < 1 || newSize > 5) { showToast('Size must be 1-5.', 'error'); return; }
+
+            tasks[taskName] = { urgency: newUrgency, size: newSize, info: newInfo };
+            saveData();
+            showToast(`'${taskName}' updated.`, 'success');
+            refreshAllUI();
+            plotTaskGraph();
+        }
+
+        function deleteTask() {
+            const taskName = editTaskDropdown.value;
+            if (!taskName) { showToast('No task selected.', 'error'); return; }
+            showConfirmation(`Are you sure you want to delete '${taskName}'?`, () => {
+                delete tasks[taskName];
+                saveData();
+                showToast(`'${taskName}' deleted.`, 'info');
+                refreshAllUI();
+                plotTaskGraph();
+            });
+        }
+
+        function deleteCompleted() {
+            const completedAt = deleteCompletedDropdown.value;
+            if (!completedAt) { showToast('No completed task selected.', 'error'); return; }
+            const taskName = completedTasks.find(t => t.completed_at === completedAt)?.name || 'Task';
+            showConfirmation(`Are you sure you want to remove '${taskName}' from your history?`, () => {
+                completedTasks = completedTasks.filter(t => t.completed_at !== completedAt);
+                saveData();
+                showToast(`'${taskName}' removed from history.`, 'info');
+                refreshAllUI();
+            });
+        }
+
+        // --- Scheduler Handlers ---
+        function addBusySlot() {
+            const date = busyDateInput.value; const startStr = busyStartTimeInput.value; const endStr = busyEndTimeInput.value;
+            const label = busyLabelInput.value.trim() || 'Busy';
+            if (!date || !startStr || !endStr) { showToast('Please fill all fields for the specific slot.', 'error'); return; }
+            if (startStr >= endStr) { showToast('Start time must be before end time.', 'error'); return; }
+
+            const newStart = new Date(`${date}T${startStr}`);
+            const newEnd = new Date(`${date}T${endStr}`);
+
+            const nonRepeatingSlots = [
+                ...(busySlots[date] || []).map(s => ({ start: new Date(`${date}T${s.start}`), end: new Date(`${date}T${s.end}`) })),
+                ...(manualSchedule[date] || []).map(s => ({ start: new Date(s.start), end: new Date(s.end) }))
+            ];
+
+            for (const slot of nonRepeatingSlots) {
+                if (Math.max(newStart, slot.start) < Math.min(newEnd, slot.end)) {
+                    showToast('Error: This slot clashes with another specific or manual appointment.', 'error');
+                    return;
+                }
+            }
+
+            if (!busySlots[date]) busySlots[date] = [];
+            busySlots[date].push({ start: startStr, end: endStr, label });
+            saveData();
+            refreshAllUI();
+            if (schedulerPage.style.display !== 'none') { generateSchedule(); }
+            busyStartTimeInput.value = busyEndTimeInput.value = busyLabelInput.value = '';
+            showToast('Specific busy slot added.', 'success');
+        }
+
+        function addRepeatingSlot() {
+            const start = repeatingStartTimeInput.value; const end = repeatingEndTimeInput.value;
+            const label = repeatingLabelInput.value.trim() || 'Daily Block';
+            if (!start || !end) { showToast('Please provide start and end times.', 'error'); return; }
+            if (start >= end) { showToast('Start time must be before end time.', 'error'); return; }
+            repeatingBusySlots.push({ start, end, label });
+            saveData();
+            refreshAllUI();
+            if (schedulerPage.style.display !== 'none') { generateSchedule(); }
+            repeatingStartTimeInput.value = repeatingEndTimeInput.value = repeatingLabelInput.value = '';
+            showToast('Repeating daily slot added.', 'success');
+        }
+
+        function removeFixedSlot() {
+            const value = removeSlotDropdown.value;
+            if (!value) { showToast('No slot selected to remove.', 'error'); return; }
+            const [type, date, indexStr] = value.split('_');
+            const index = parseInt(indexStr, 10);
+            if (type === 'repeating') { repeatingBusySlots.splice(parseInt(date), 1); }
+            else if (type === 'specific') { busySlots[date].splice(index, 1); if (busySlots[date].length === 0) delete busySlots[date]; }
+            else if (type === 'manual') {
+                const slot = manualSchedule[date][index];
+                if (slot) {
+                    pastHistoryRecords.push({
+                        date,
+                        label: slot.name,
+                        start: new Date(slot.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        end: new Date(slot.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                        type: 'Manual Task (Removed)'
+                    });
+                }
+                manualSchedule[date].splice(index, 1);
+                if (manualSchedule[date].length === 0) delete manualSchedule[date];
+            }
+            saveData();
+            refreshAllUI();
+            if (schedulerPage.style.display !== 'none') { generateSchedule(); }
+            showToast('Selected slot removed.', 'info');
+        }
+
+        function manualScheduleTask() {
+            const taskName = manualTaskDropdown.value; const date = manualDatePicker.value; const startTime = manualStartTimeInput.value;
+            if (!taskName || !date || !startTime) { showToast('Please select a task, date, and start time.', 'error'); return; }
+
+            const taskData = tasks[taskName];
+            const customDuration = parseInt(manualDurationInput.value, 10);
+            const durationMins = customDuration > 0 ? customDuration : sizeToDurationMinutes(taskData.size);
+
+            const startDt = new Date(`${date}T${startTime}`); const endDt = new Date(startDt.getTime() + durationMins * 60000);
+
+            const nonRepeatingSlots = [
+                ...(busySlots[date] || []).map(s => ({ start: new Date(`${date}T${s.start}`), end: new Date(`${date}T${s.end}`) })),
+                ...(manualSchedule[date] || []).map(s => ({ start: new Date(s.start), end: new Date(s.end) }))
+            ];
+
+            for (const slot of nonRepeatingSlots) {
+                if (Math.max(startDt, slot.start) < Math.min(endDt, slot.end)) {
+                    showToast('Conflict! Overlaps with another specific or manual appointment.', 'error');
+                    return;
+                }
+            }
+
+            if (!manualSchedule[date]) manualSchedule[date] = [];
+            manualSchedule[date].push({ start: startDt.toISOString(), end: endDt.toISOString(), name: taskName, urgency: taskData.urgency, source: 'manual' });
+            saveData();
+            refreshAllUI();
+            if (schedulerPage.style.display !== 'none') { generateSchedule(); }
+            manualStartTimeInput.value = '';
+            manualDurationInput.value = '';
+            showToast(`Manually scheduled '${taskName}'.`, 'success');
+        }
+
+        function clearScheduleData() {
+            showConfirmation('Are you sure you want to clear ALL fixed times and manually scheduled tasks?', () => {
+                busySlots = {};
+                manualSchedule = {};
+                repeatingBusySlots = [];
+                saveData();
+                refreshAllUI();
+
+                const ctx = scheduleCanvas.getContext('2d');
+                ctx.clearRect(0, 0, scheduleCanvas.width, scheduleCanvas.height);
+                unscheduledTasksDiv.innerHTML = '';
+                lastGeneratedSchedule = {};
+                updateCurrentTaskDisplay();
+
+                ctx.font = '16px Inter';
+                ctx.fillStyle = '#64748b';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('Your schedule will appear here.', scheduleCanvas.width / 2, scheduleCanvas.height / 2);
+
+                showToast('All scheduled data has been cleared.', 'info');
+            });
+        }
+
+        // --- Scheduler Logic & Plotting ---
+        function calculateFreeSlotsForDay(currentDate) {
+            const currentDateStr = toLocaleDateStringISO(currentDate);
+
+            const now = new Date();
+            const workStart = new Date(currentDate).setHours(8, 0, 0, 0);
+            const workEnd = new Date(currentDate).setHours(22, 0, 0, 0);
+            let effectiveStart = (now.toDateString() === currentDate.toDateString() && now > workStart) ? now.getTime() : workStart;
+
+            let freeSlots = (effectiveStart < workEnd) ? [{ start: new Date(effectiveStart), end: new Date(workEnd) }] : [];
+
+            const overridingSlots = [
+                ...(busySlots[currentDateStr] || []).map(s => ({ start: new Date(`${currentDateStr}T${s.start}`), end: new Date(`${currentDateStr}T${s.end}`) })),
+                ...(manualSchedule[currentDateStr] || []).map(s => ({ start: new Date(s.start), end: new Date(s.end) }))
+            ];
+
+            const activeRepeatingSlots = repeatingBusySlots.filter(repeating => {
+                const repeatingStart = new Date(`${currentDateStr}T${repeating.start}`);
+                const repeatingEnd = new Date(`${currentDateStr}T${repeating.end}`);
+                const isOverridden = overridingSlots.some(override =>
+                    Math.max(repeatingStart, override.start) < Math.min(repeatingEnd, override.end)
+                );
+                return !isOverridden;
+            }).map(s => ({ start: new Date(`${currentDateStr}T${s.start}`), end: new Date(`${currentDateStr}T${s.end}`) }));
+
+            const allFixedSlots = [...overridingSlots, ...activeRepeatingSlots];
+
+            allFixedSlots.forEach(fixed => {
+                const bufferedStart = new Date(fixed.start.getTime() - 30 * 60000);
+                const bufferedEnd = new Date(fixed.end.getTime() + 30 * 60000);
+
+                let nextFreeSlots = [];
+                freeSlots.forEach(free => {
+                    if (free.start < bufferedStart) {
+                        nextFreeSlots.push({ start: free.start, end: new Date(Math.min(free.end.getTime(), bufferedStart.getTime())) });
+                    }
+                    if (free.end > bufferedEnd) {
+                        nextFreeSlots.push({ start: new Date(Math.max(free.start.getTime(), bufferedEnd.getTime())), end: free.end });
+                    }
+                });
+                freeSlots = nextFreeSlots.filter(slot => slot.end > slot.start);
+            });
+
+            return freeSlots.sort((a, b) => a.start - b.start);
+        }
+
+        function generateSchedule() {
+            let tasksToSchedule = Object.entries(tasks)
+                .filter(([name]) => !Object.values(manualSchedule).flat().some(task => task.name === name))
+                .sort(([, a], [, b]) => b.urgency - a.urgency);
+
+            let finalSchedule = {};
+            const startDate = new Date(); startDate.setHours(0, 0, 0, 0); const numDays = 7;
+
+            for (let dayOffset = 0; dayOffset < numDays; dayOffset++) {
+                const currentDate = new Date(startDate.getTime() + dayOffset * 86400000);
+                const currentDateStr = toLocaleDateStringISO(currentDate);
+
+                finalSchedule[currentDateStr] = (manualSchedule[currentDateStr] || []).map(s => ({...s, start: new Date(s.start), end: new Date(s.end)}));
+
+                let freeSlotsToday = calculateFreeSlotsForDay(currentDate);
+
+                let dailySizeTotal = finalSchedule[currentDateStr].reduce((sum, task) => {
+                    const taskData = tasks[task.name];
+                    return sum + (taskData ? taskData.size : 0);
+                }, 0);
+
+                const tasksForNextDay = [];
+                for (const [name, data] of tasksToSchedule) {
+                    let scheduled = false;
+                    const taskSize = data.size || 2.5;
+
+                    if (dailySizeTotal + taskSize > 9) {
+                        tasksForNextDay.push([name, data]);
+                        continue;
+                    }
+
+                    const durationMs = sizeToDurationMinutes(taskSize) * 60000;
+                    for (let i = 0; i < freeSlotsToday.length; i++) {
+                        const freeSlot = freeSlotsToday[i];
+                        if (freeSlot.end.getTime() - freeSlot.start.getTime() >= durationMs) {
+                            const taskStart = freeSlot.start;
+                            const taskEnd = new Date(taskStart.getTime() + durationMs);
+
+                            finalSchedule[currentDateStr].push({ start: taskStart, end: taskEnd, name, urgency: data.urgency, source: 'auto' });
+                            dailySizeTotal += taskSize;
+
+                            const nextAvailableTime = new Date(taskEnd.getTime() + 30 * 60000);
+                            if (nextAvailableTime < freeSlot.end) {
+                                freeSlot.start = nextAvailableTime;
+                            } else {
+                                freeSlotsToday.splice(i, 1);
+                            }
+
+                            scheduled = true;
+                            break;
+                        }
+                    }
+                    if (!scheduled) { tasksForNextDay.push([name, data]); }
+                }
+                tasksToSchedule = tasksForNextDay;
+            }
+
+            lastGeneratedSchedule = finalSchedule;
+            plotSchedule(finalSchedule, startDate);
+            updateCurrentTaskDisplay();
+
+            const unscheduled = tasksToSchedule.map(([name]) => name);
+            if (unscheduled.length > 0) {
+                unscheduledTasksDiv.innerHTML = `<h3 class="font-bold text-red-600 mt-4">Could Not Schedule:</h3><p class="text-red-400">${unscheduled.join(', ')}</p>`;
+            } else {
+                unscheduledTasksDiv.innerHTML = '';
+            }
+        }
+
+        function wrapText(context, text, x, y, maxWidth, lineHeight) {
+            const words = text.split(' ');
+            let line = '';
+            let lines = [];
+            for(let n = 0; n < words.length; n++) {
+                const testLine = line + words[n] + ' ';
+                const metrics = context.measureText(testLine);
+                const testWidth = metrics.width;
+                if (testWidth > maxWidth && n > 0) {
+                    lines.push(line.trim());
+                    line = words[n] + ' ';
+                } else {
+                    line = testLine;
+                }
+            }
+            lines.push(line.trim());
+
+            const totalTextHeight = lines.length * lineHeight;
+            const startY = y - (totalTextHeight / 2) + (lineHeight / 1.5);
+
+            for (let i = 0; i < lines.length; i++) {
+                context.fillText(lines[i], x, startY + (i * lineHeight));
+            }
+        }
+
+        function plotSchedule(schedule, startDate) {
+            const ctx = scheduleCanvas.getContext('2d');
+            const container = scheduleCanvas.parentElement;
+            const width = container.clientWidth;
+            const height = 800;
+            scheduleCanvas.width = width;
+            scheduleCanvas.height = height;
+            ctx.clearRect(0, 0, width, height);
+            
+            const headerColor = '#cbd5e1';
+            const timeColor = '#94a3b8';
+            const gridColor = '#334155';
+            const busyTextColor = '#e2e8f0';
+            const taskTextColor = '#e2e8f0';
+
+            ctx.font = '12px Inter';
+            const widestTimeLabel = "12:00 PM";
+            const textMetrics = ctx.measureText(widestTimeLabel);
+            const yAxisPadding = textMetrics.width + 15;
+
+            const scheduleWidth = width - yAxisPadding;
+            const numDays = 7;
+            const dayWidth = scheduleWidth / numDays;
+            const yStartHour = 7.5; const yEndHour = 22.5; const totalHours = yEndHour - yStartHour;
+            const manualColor = '#3a86ff'; const autoColor = '#ffbe0b'; const busyColor = 'rgba(128, 128, 128, 0.3)';
+            const timeToY = (date) => ((date.getHours() + date.getMinutes() / 60) - yStartHour) / totalHours * height;
+
+            for (let i = 0; i < numDays; i++) {
+                const date = new Date(startDate.getTime() + i * 86400000);
+                const x = yAxisPadding + (i * dayWidth);
+                ctx.fillStyle = headerColor;
+                ctx.font = 'bold 14px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(date.toLocaleDateString('en-US', { weekday: 'short' }), x + dayWidth / 2, 20);
+                if (i > 0) {
+                    ctx.strokeStyle = gridColor;
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, height);
+                    ctx.stroke();
+                }
+            }
+
+            for (let hour = Math.ceil(yStartHour); hour <= Math.floor(yEndHour); hour++) {
+                const date = new Date();
+                date.setHours(hour, 0, 0, 0);
+                const y = timeToY(date);
+                ctx.fillStyle = timeColor;
+                ctx.font = '12px Inter';
+                ctx.textAlign = 'right';
+                ctx.fillText(date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), yAxisPadding - 5, y + 4);
+                ctx.strokeStyle = gridColor;
+                ctx.beginPath();
+                ctx.moveTo(yAxisPadding, y);
+                ctx.lineTo(width, y);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < numDays; i++) {
+                const date = new Date(startDate.getTime() + i * 86400000);
+                const dateStr = toLocaleDateStringISO(date);
+                const x = yAxisPadding + (i * dayWidth);
+                const barWidth = dayWidth * 0.8;
+                const barX = x + (dayWidth - barWidth) / 2;
+
+                const overridingSlotsForDay = [
+                    ...(busySlots[dateStr] || []).map(s => ({ start: new Date(`${dateStr}T${s.start}`), end: new Date(`${dateStr}T${s.end}`) })),
+                    ...(manualSchedule[dateStr] || []).map(s => ({ start: new Date(s.start), end: new Date(s.end) }))
+                ];
+                const activeRepeatingSlotsForDay = repeatingBusySlots.filter(repeating => {
+                    const repeatingStart = new Date(`${dateStr}T${repeating.start}`);
+                    const repeatingEnd = new Date(`${dateStr}T${repeating.end}`);
+                    const isOverridden = overridingSlotsForDay.some(override =>
+                        Math.max(repeatingStart, override.start) < Math.min(repeatingEnd, override.end)
+                    );
+                    return !isOverridden;
+                });
+
+                const busySlotsToDraw = [...(busySlots[dateStr] || []), ...activeRepeatingSlotsForDay];
+
+                busySlotsToDraw.forEach(slot => {
+                    const start = new Date(`${dateStr}T${slot.start}`);
+                    const end = new Date(`${dateStr}T${slot.end}`);
+                    const y = timeToY(start);
+                    const h = timeToY(end) - y;
+                    ctx.fillStyle = busyColor;
+                    ctx.fillRect(x + dayWidth * 0.05, y, dayWidth * 0.9, h);
+                    ctx.fillStyle = busyTextColor;
+                    ctx.font = 'bold 10px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    wrapText(ctx, slot.label, x + dayWidth / 2, y + h / 2, dayWidth * 0.85, 12);
+                });
+
+                (schedule[dateStr] || []).sort((a, b) => a.start - b.start).forEach(task => {
+                    const y = timeToY(task.start);
+                    const h = timeToY(task.end) - y;
+                    ctx.fillStyle = task.source === 'manual' ? manualColor : autoColor;
+                    ctx.strokeStyle = '#475569';
+                    ctx.lineWidth = 1;
+                    ctx.fillRect(barX, y, barWidth, h);
+                    ctx.strokeRect(barX, y, barWidth, h);
+                    ctx.fillStyle = taskTextColor;
+                    ctx.font = 'bold 10px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    wrapText(ctx, task.name, barX + barWidth / 2, y + h / 2, barWidth - 5, 12);
+                });
+            }
+        }
+
+        function plotTaskGraph() {
+            graphBarData = [];
+            const axisColor = '#94a3b8';
+            const labelColor = '#e2e8f0';
+            const ctx = taskGraphCanvas.getContext('2d');
+            
+            if (Object.keys(tasks).length === 0) {
+                focusOutput.innerHTML = '';
+                if(ctx){
+                    ctx.clearRect(0,0,taskGraphCanvas.width, taskGraphCanvas.height);
+                }
+                return;
+            }
+
+            const sortedTasks = Object.entries(tasks).sort(([,a], [,b]) => b.urgency - a.urgency);
+            const topTaskName = sortedTasks[0][0];
+            const encouragement = ENCOURAGEMENTS[Math.floor(Math.random() * ENCOURAGEMENTS.length)];
+            let taskMessage = `Your main focus should be: <strong>${topTaskName}</strong>.`;
+            if (sortedTasks.length > 1) { 
+                taskMessage = `Start with <strong>${topTaskName}</strong>, then move on to <strong>${sortedTasks[1][0]}</strong>.`; 
+            }
+
+            let quickWinMessage = '';
+            if (sortedTasks.length > 2) {
+                const topTwoNames = sortedTasks.slice(0, 2).map(([name]) => name);
+                const quickWinTask = sortedTasks
+                    .filter(([name, data]) => !topTwoNames.includes(name) && data.size <= 2)
+                    .sort(([, a], [, b]) => b.urgency - a.urgency)[0]; 
+
+                if (quickWinTask) {
+                    const [quickWinName] = quickWinTask;
+                    quickWinMessage = `<div class="mt-3 pt-3 border-t border-cyan-300 dark:border-sky-600">
+                        <div style="font-size: 1rem;" class="text-slate-300">
+                            🚀 While you're at it, you could quickly complete: <strong>${quickWinName}</strong>
+                        </div>
+                    </div>`;
+                }
+            }
+
+
+            focusOutput.innerHTML = `
+                <div style="font-family: 'Poppins', sans-serif; background: linear-gradient(145deg, #1e3a8a, #2563eb); border: 2px solid #60a5fa; border-radius: 12px; padding: 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); margin-bottom: 1rem;" class="dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 dark:border-sky-500">
+                    <div style="font-size: 1.25rem; font-weight: 600;" class="text-sky-300">🎯 Your Top Priorities! 🎯</div>
+                    <div style="font-size: 1rem;" class="text-slate-300">${taskMessage}</div>
+                    ${quickWinMessage}
+                    <div style="font-size: 1.1rem; font-style: italic; margin-top: 0.75rem;" class="text-sky-400">"${encouragement}"</div>
+                </div>`;
+
+            const container = taskGraphCanvas.parentElement;
+            const width = container.clientWidth;
+            const height = 400;
+            taskGraphCanvas.width = width;
+            taskGraphCanvas.height = height;
+            ctx.clearRect(0, 0, width, height);
+
+            const padding = { top: 20, bottom: 80, left: 40, right: 20 };
+            const chartWidth = width - padding.left - padding.right;
+            const chartHeight = height - padding.top - padding.bottom;
+            const names = sortedTasks.map(([name]) => name);
+            const scores = sortedTasks.map(([, data]) => data.urgency);
+            const sizes = sortedTasks.map(([, data]) => data.size);
+            const barCount = names.length;
+            const barGap = 5;
+            const totalBarWidth = (chartWidth - (barCount - 1) * barGap);
+            const baseBarWidth = totalBarWidth / barCount;
+
+            const maxScore = 10;
+            ctx.beginPath();
+            ctx.moveTo(padding.left, padding.top);
+            ctx.lineTo(padding.left, padding.top + chartHeight);
+            ctx.strokeStyle = axisColor;
+            ctx.stroke();
+
+            ctx.fillStyle = labelColor;
+            for (let i = 0; i <= maxScore; i += 2) {
+                const y = padding.top + chartHeight - (i / maxScore) * chartHeight;
+                ctx.fillText(i, padding.left - 15, y + 3);
+                ctx.beginPath();
+                ctx.moveTo(padding.left - 5, y);
+                ctx.lineTo(padding.left, y);
+                ctx.stroke();
+            }
+
+            for (let i = 0; i < barCount; i++) {
+                const barHeight = (scores[i] / maxScore) * chartHeight;
+                const widthMultiplier = 0.3 + (sizes[i] - 1) / 4 * 0.7;
+                const actualBarWidth = baseBarWidth * widthMultiplier;
+                const x = padding.left + i * (baseBarWidth + barGap) + (baseBarWidth - actualBarWidth)/2;
+                const y = padding.top + chartHeight - barHeight;
+
+                const startColor = { r: 217, g: 4,  b: 41 };
+                const endColor   = { r: 6,   g: 214, b: 160 };
+
+                let progress = 0;
+                if (barCount > 1) progress = i / (barCount - 1);
+
+                const r = Math.round(startColor.r + (endColor.r - startColor.r) * progress);
+                const g = Math.round(startColor.g + (endColor.g - startColor.g) * progress);
+                const b = Math.round(startColor.b + (endColor.b - startColor.b) * progress);
+                const barColor = `rgb(${r}, ${g}, ${b})`;
+
+                ctx.fillStyle = barColor;
+                ctx.fillRect(x, y, actualBarWidth, barHeight);
+
+                graphBarData.push({ x, y, width: actualBarWidth, height: barHeight, info: sortedTasks[i][1].info });
+
+                ctx.fillStyle = labelColor;
+                ctx.font = 'bold 10px Inter';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${i+1}st`, x + actualBarWidth/2, y - 5);
+
+                ctx.save();
+                ctx.translate(x + actualBarWidth/2, height - padding.bottom + 10);
+                ctx.rotate(Math.PI / 4);
+                ctx.textAlign = 'left';
+                ctx.font = '12px Inter';
+                ctx.fillText(names[i].substring(0, 12), 0, 0);
+                ctx.restore();
+            }
+        }
+
+        function updateCurrentTaskDisplay() {
+            const now = new Date();
+            const todayStr = toLocaleDateStringISO(now);
+            const scheduleForToday = lastGeneratedSchedule[todayStr] || [];
+
+            const currentTask = scheduleForToday.find(task => {
+                const start = new Date(task.start);
+                const end = new Date(task.end);
+                return start <= now && end > now;
+            });
+
+            let html = '';
+            if (currentTask) {
+                const startTime = new Date(currentTask.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const endTime = new Date(currentTask.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                html = `
+                <div style="font-family: 'Poppins', sans-serif; background: linear-gradient(145deg, #1e3a8a, #2563eb); border: 2px solid #60a5fa; border-radius: 12px; padding: 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);" class="dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 dark:border-sky-500">
+                    <div style="font-size: 1.25rem; font-weight: 600;" class="text-sky-300">⏰ Right Now (${startTime} - ${endTime}) ⏰</div>
+                    <div style="font-size: 1.1rem; margin-top: 0.5rem;" class="text-slate-300">You should be working on: <strong>${currentTask.name}</strong></div>
+                </div>`;
+            } else {
+                html = `
+                <div style="font-family: 'Poppins', sans-serif; background: linear-gradient(145deg, #166534, #16a34a); border: 2px solid #4ade80; border-radius: 12px; padding: 1rem; text-align: center; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);" class="dark:bg-gradient-to-r dark:from-slate-700 dark:to-slate-800 dark:border-green-500">
+                    <div style="font-size: 1.25rem; font-weight: 600;" class="text-green-300">✅ Free Time ✅</div>
+                    <div style="font-size: 1.1rem; margin-top: 0.5rem;" class="text-slate-300">No task currently scheduled. Take a break!</div>
+                </div>`;
+            }
+            currentTaskDisplay.innerHTML = html;
+        }
+        
+        function checkStreak() {
+            if (!streakInfo.lastDate) return;
+
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+
+            const lastDate = new Date(streakInfo.lastDate);
+
+            today.setHours(0, 0, 0, 0);
+            yesterday.setHours(0, 0, 0, 0);
+            lastDate.setHours(0, 0, 0, 0);
+
+            if (lastDate.getTime() !== today.getTime() && lastDate.getTime() !== yesterday.getTime()) {
+                 if(streakInfo.current > 0) {
+                    showToast(`Streak of ${streakInfo.current} days ended. Start a new one!`, 'info');
+                 }
+                streakInfo.current = 0;
+                saveData();
+            }
+        }
+
+        // --- 3D Logo Functions ---
+        function init3dLogo() {
+            const container = document.getElementById('logo-container');
+            if (!container) return;
+
+            // Scene
+            logoScene = new THREE.Scene();
+
+            // Camera
+            logoCamera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            logoCamera.position.z = 5;
+
+            // Renderer
+            logoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            logoRenderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(logoRenderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            logoScene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+            directionalLight.position.set(5, 5, 5);
+            logoScene.add(directionalLight);
+
+            // Planet and Ring Group
+            logoGroup = new THREE.Group();
+
+            // Planet
+            const planetGeometry = new THREE.SphereGeometry(1.5, 32, 32);
+            const planetMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+            logoPlanet = new THREE.Mesh(planetGeometry, planetMaterial);
+            logoGroup.add(logoPlanet);
+
+            // Ring Texture
+            const ringCanvas = document.createElement('canvas');
+            const ringCtx = ringCanvas.getContext('2d');
+            ringCanvas.width = 256;
+            ringCanvas.height = 1;
+
+            const gradient = ringCtx.createLinearGradient(0, 0, 256, 0);
+            gradient.addColorStop(0, '#5a5244');
+            gradient.addColorStop(0.2, '#b89f7e');
+            gradient.addColorStop(0.4, '#e8d5b4');
+            gradient.addColorStop(0.6, '#d1b793');
+            gradient.addColorStop(0.8, '#a59178');
+            gradient.addColorStop(1, '#5a5244');
+
+            ringCtx.fillStyle = gradient;
+            ringCtx.fillRect(0, 0, 256, 1);
+
+            const ringTexture = new THREE.CanvasTexture(ringCanvas);
+
+            // Ring
+            const ringGeometry = new THREE.TorusGeometry(2.5, 0.2, 2, 100);
+            const ringMaterial = new THREE.MeshBasicMaterial({ map: ringTexture, side: THREE.DoubleSide });
+            logoRing = new THREE.Mesh(ringGeometry, ringMaterial);
+            logoRing.rotation.x = Math.PI / 2;
+            logoGroup.add(logoRing);
+            
+            // Set rotation axis
+            logoGroup.rotation.x = 0.2; // slight tilt forward
+            logoGroup.rotation.z = -Math.PI / 6; // NW to SE tilt
+            
+            logoScene.add(logoGroup);
+
+            // Mouse Controls
+            container.addEventListener('mousedown', (e) => { isDragging = true; });
+            window.addEventListener('mouseup', (e) => { isDragging = false; });
+            window.addEventListener('mousemove', (e) => {
+                if(isDragging) {
+                    const deltaMove = {
+                        x: e.offsetX - previousMousePosition.x,
+                        y: e.offsetY - previousMousePosition.y
+                    };
+                    
+                    logoGroup.rotation.y += deltaMove.x * 0.01;
+                    logoGroup.rotation.x += deltaMove.y * 0.01;
+                }
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+
+
+            animateLogo();
+        }
+
+        function animateLogo() {
+            requestAnimationFrame(animateLogo);
+            if (!isDragging) {
+                logoGroup.rotation.y += 0.005;
+            }
+            logoRenderer.render(logoScene, logoCamera);
+        }
+
+        function updateLogoColors() {
+            if (!logoPlanet) return;
+            const computedStyle = getComputedStyle(document.body);
+            const planetColor = computedStyle.getPropertyValue('--accent-secondary').trim();
+            
+            logoPlanet.material.color.set(planetColor);
+        }
+
+        // --- Initialization ---
+        function refreshAllUI() {
+            refreshAllDropdowns();
+            refreshFixedTimesDisplay();
+            showAllTasks();
+            showCompleted();
+            showStats();
+
+            const histTabBtn = document.querySelector('[data-tab="tab-sch-history"]');
+            const histPane = document.getElementById('tab-sch-history');
+            if (histTabBtn && histPane && histPane.classList.contains('active')) { showHistory(); }
+        }
+
+        function initializeApp() {
+            const todayStr = toLocaleDateStringISO(new Date());
+            busyDateInput.value = todayStr;
+            manualDatePicker.value = todayStr;
+
+            navManagerBtn.addEventListener('click', () => {
+                managerPage.style.display = 'block';
+                schedulerPage.style.display = 'none';
+                navManagerBtn.classList.add('active');
+                navSchedulerBtn.classList.remove('active');
+                plotTaskGraph();
+            });
+
+            navSchedulerBtn.addEventListener('click', () => {
+                managerPage.style.display = 'none';
+                schedulerPage.style.display = 'block';
+                navManagerBtn.classList.remove('active');
+                navSchedulerBtn.classList.add('active');
+                updateCurrentTaskDisplay();
+            });
+
+            function setupTabs(containerId) {
+                const tabContainer = document.getElementById(containerId);
+                if (!tabContainer) return;
+                const tabs = tabContainer.querySelectorAll('.tab-btn');
+                const parent = tabContainer.closest('.card, body');
+                const contents = Array.from(parent.querySelectorAll('.tab-content'));
+
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tab.classList.add('active');
+                        contents.forEach(content => {
+                            content.classList.toggle('active', content.id === tab.dataset.tab);
+                        });
+                        if(tab.dataset.tab === 'tab-graph') plotTaskGraph();
+                        if(tab.dataset.tab === 'tab-sch-history') showHistory();
+                    });
+                });
+            }
+            setupTabs('task-view-tabs');
+            setupTabs('scheduler-tabs');
+
+            document.querySelectorAll('.accordion-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    header.classList.toggle('active');
+                });
+            });
+
+            addTasksBtn.addEventListener('click', addTasks);
+            completeTaskBtn.addEventListener('click', completeTask);
+            updateTaskBtn.addEventListener('click', updateTask);
+            deleteTaskBtn.addEventListener('click', deleteTask);
+            deleteCompletedBtn.addEventListener('click', deleteCompleted);
+            addBusySlotBtn.addEventListener('click', addBusySlot);
+            addRepeatingSlotBtn.addEventListener('click', addRepeatingSlot);
+            removeSlotBtn.addEventListener('click', removeFixedSlot);
+            manualScheduleBtn.addEventListener('click', manualScheduleTask);
+            generateScheduleBtn.addEventListener('click', generateSchedule);
+            clearScheduleBtn.addEventListener('click', clearScheduleData);
+
+            taskGraphCanvas.addEventListener('mousemove', (e) => {
+                const rect = taskGraphCanvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                let foundBar = false;
+                for (const bar of graphBarData) {
+                    if (x >= bar.x && x <= bar.x + bar.width && y >= bar.y && y <= bar.y + bar.height) {
+                        if (bar.info) {
+                            graphTooltip.innerHTML = bar.info;
+                            graphTooltip.style.left = `${e.pageX + 10}px`;
+                            graphTooltip.style.top = `${e.pageY + 10}px`;
+                            graphTooltip.classList.remove('hidden');
+                            foundBar = true;
+                            break;
+                        }
+                    }
+                }
+                if (!foundBar) { graphTooltip.classList.add('hidden'); }
+            });
+            taskGraphCanvas.addEventListener('mouseleave', () => { graphTooltip.classList.add('hidden'); });
+
+            loadData();
+            init3dLogo();
+            updateLogoColors(); // Ensure initial colors are set
+            checkStreak();
+            refreshAllUI();
+            plotTaskGraph();
+            updateCurrentTaskDisplay();
+            setInterval(updateCurrentTaskDisplay, 30000);
+
+            const ctx = scheduleCanvas.getContext('2d');
+            ctx.font = '16px Inter';
+            ctx.fillStyle = '#64748b';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('Your schedule will appear here.', scheduleCanvas.width / 2, scheduleCanvas.height / 2);
+
+            const debouncedResize = debounce(() => {
+                plotTaskGraph();
+                const scheduleOutput = document.getElementById('schedule-output');
+                if (scheduleOutput.offsetParent !== null && lastGeneratedSchedule && Object.keys(lastGeneratedSchedule).length > 0) { 
+                    generateSchedule(); 
+                }
+            }, 250);
+
+            window.addEventListener('resize', debouncedResize);
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
