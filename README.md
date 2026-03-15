@@ -7,7 +7,7 @@ https://saturn-todo.netlify.app
 
 ## Background
 Original prototype made in Python/Jupyter using ipywidgets and JSON file storage before 
-being rebuilt as a full offline web app. See `saturn_prototype.ipynb`.
+being rebuilt as a full web app. See `saturn_prototype.ipynb`.
 
 ## Features
 - Smart task input with urgency (0-10) and task size (1-5)
